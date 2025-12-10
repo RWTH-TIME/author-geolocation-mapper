@@ -25,7 +25,7 @@ def write_df_to_postgres(df: pd.DataFrame, settings: PostgresSettings):
     df.to_sql(settings.DB_TABLE, engine, if_exists="replace", index=False)
 
 
-# @entrypoint(AffiliationMatchingEntrypoint)
+@entrypoint(AffiliationMatchingEntrypoint)
 def affiliation_matching(settings):
     # S3Operations.download(settings.bib_input, "input.bib")
 
@@ -74,5 +74,4 @@ if __name__ == "__main__":
             PG_USER="postgres",
         )
     )
-
     affiliation_matching(settings)

@@ -1,0 +1,33 @@
+name: Author Geolocation Mapper
+author: Paul Kalhorn
+description: Author to Geolocation Mapping 
+docker_image: <tbs>
+entrypoints:
+  affiliation_matching:
+    description: Match affiliations of authors to their geolocation
+    envs:
+      ASSIGN_ALL_IF_SINGLE_INSTITUTION: true
+      MATCH_THRESHOLD: 75.0
+    inputs:
+      bib_input:
+        config:
+          bib_file_BUCKET_NAME: null
+          bib_file_FILE_EXT: bib
+          bib_file_FILE_NAME: null
+          bib_file_FILE_PATH: null
+          bib_file_S3_ACCESS_KEY: null
+          bib_file_S3_HOST: null
+          bib_file_S3_PORT: null
+          bib_file_S3_SECRET_KEY: null
+        description: A bib file, the algorithm expects the bib entries to have the "affiliation" attribute
+        type: file
+    outputs:
+      affiliation_output:
+        config:
+          affiliation_output_DB_TABLE: null
+          affiliation_output_PG_HOST: null
+          affiliation_output_PG_PASS: null
+          affiliation_output_PG_PORT: null
+          affiliation_output_PG_USER: null
+        description: A database table containing the authors, their matched institution, lat, lon, and the confidence score
+        type: pg_table
