@@ -8,6 +8,7 @@ entrypoints:
     envs:
       ASSIGN_ALL_IF_SINGLE_INSTITUTION: true
       MATCH_THRESHOLD: 75.0
+      BIB_DOWNLOAD_PATH: /tmp/input.bib
     inputs:
       bib_input:
         config:

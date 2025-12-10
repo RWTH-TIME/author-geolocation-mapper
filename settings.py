@@ -28,5 +28,7 @@ class AffiliationMatchingEntrypoint(EnvSettings):
     ASSIGN_ALL_IF_SINGLE_INSTITUTION: bool = True
     MATCH_THRESHOLD: float = 75.0
 
+    BIB_DOWNLOAD_PATH: str = "/tmp/input.bib"
+
     bib_input: BIBInput
     affiliation_output: AffiliationOutput

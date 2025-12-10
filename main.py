@@ -23,10 +23,10 @@ def write_df_to_postgres(df: pd.DataFrame, settings: PostgresSettings):
 
 @entrypoint(AffiliationMatchingEntrypoint)
 def affiliation_matching(settings):
-    S3Operations.download(settings.bib_input, "input.bib")
+    S3Operations.download(settings.bib_input, settings.BIB_DOWNLOAD_PATH)
 
     # Load bib
-    with open("input.bib") as bibtex_file:
+    with open(settings.BIB_DOWNLOAD_PATH) as bibtex_file:
         bib_db = bibtexparser.load(bibtex_file)
 
     # Load reference csv
