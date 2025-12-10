@@ -4,7 +4,11 @@ import bibtexparser
 
 from settings import REFERENCE_COL
 from .models import MatchResult
-from .authors import parse_authors, extract_institution
+from .authors import (
+    parse_authors,
+    extract_institution,
+    normalize_institution_name
+)
 
 
 class AffiliationMatcher:
@@ -16,12 +20,15 @@ class AffiliationMatcher:
     def __init__(
         self,
         mapping_df: pd.DataFrame,
-        normalized_ref_names: list[str],
-        match_threshold: float = 70.0,
+        match_threshold: float = 75.0,
         assign_all_if_single=True,
     ):
-        self.mapping_df = mapping_df
-        self.ref_names = normalized_ref_names
+        self.mapping_df = mapping_df.copy()
+
+        self.mapping_df["__normalized__"] = self.mapping_df[REFERENCE_COL] \
+            .apply(normalize_institution_name)
+
+        self.ref_names = self.mapping_df["__normalized__"].tolist()
         self.threshold = match_threshold
         self.assign_all_if_single = assign_all_if_single
 
@@ -65,8 +72,10 @@ class AffiliationMatcher:
                 )
 
                 for author in targets:
-                    results.append(self._make_assignment(
-                        author, parsed.rest, match))
+                    assignment = self._make_assignment(
+                        author, parsed.rest, match)
+                    if assignment is not None:   # keep only valid matches
+                        results.append(assignment)
 
         return pd.DataFrame(results)
 
@@ -89,13 +98,18 @@ class AffiliationMatcher:
         author: str,
         rest: str,
         match: MatchResult
-    ) -> dict:
-        institution = match.best_match if \
-            match.similarity > self.threshold else None
+    ) -> dict | None:
+        """
+        Create a row for this author–institution match.
+        Returns None when similarity is below threshold, meaning the
+        author should not appear in the output.
+        """
+        if match.similarity <= self.threshold:
+            return None  # skip assignment entirely
 
         return {
             "author": author,
-            "institution": institution,
+            "institution": match.best_match,
             "similarity": match.similarity,
             "lat": match.lat,
             "lon": match.lon,
