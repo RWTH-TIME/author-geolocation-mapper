@@ -127,7 +127,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/topic-modeling
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/author-geolocation-mapper
           tags: |
             type=ref, event=pr
             type=raw, value=latest, enable=${{ (github.ref == format('refs/heads/{0}', 'main')) }}
