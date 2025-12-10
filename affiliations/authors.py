@@ -16,32 +16,30 @@ def remove_parens(s: str) -> str:
 
 
 def parse_single_author(segment: str) -> str:
-    if "," in segment:
-        last, first = (x.strip() for x in segment.split(",", 1))
-        return f"{first} {last}"
     return segment.strip()
 
 
 def parse_authors(text: str) -> ParsedAffiliation:
-    """Extract authors and institution rest block."""
+    """Extract authors and the remainder institution block."""
     cleaned = remove_parens(text)
     parts = [p.strip() for p in cleaned.split(";")]
 
     authors = []
 
-    # Parse authors, except last part (which might be author + institution)
+    # Parse everything except last part
     for part in parts[:-1]:
         if part and not looks_like_institution(part):
             authors.append(parse_single_author(part))
 
+    # Last block: may contain author or institution
     last_block = remove_parens(parts[-1])
     pieces = [p.strip() for p in last_block.split(",")]
 
-    # Now look at special last part, check wether author can be found
+    # Case: "Lastname, Firstname, Institution…"
     if len(pieces) >= 2:
-        maybe_person = f"{pieces[0]} {pieces[1]}"
+        maybe_person = f"{pieces[0]}, {pieces[1]}"
         if not looks_like_institution(maybe_person):
-            authors.append(f"{pieces[1]} {pieces[0]}")
+            authors.append(parse_single_author(maybe_person))
             rest = ", ".join(pieces[2:])
             return ParsedAffiliation(authors, rest)
 

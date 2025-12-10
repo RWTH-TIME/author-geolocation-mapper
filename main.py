@@ -31,6 +31,14 @@ def affiliation_matching(settings):
 
     # Load reference csv
     institution_mapping = pd.read_csv("key_geo_gh.csv", sep=";")
+    institution_mapping["lat"] = (
+        institution_mapping["lat"].astype(str).str.replace(
+            ",", ".", regex=False).astype(float)
+    )
+    institution_mapping["lon"] = (
+        institution_mapping["lon"].astype(str).str.replace(
+            ",", ".", regex=False).astype(float)
+    )
 
     matcher = AffiliationMatcher(
         mapping_df=institution_mapping,
@@ -41,30 +49,3 @@ def affiliation_matching(settings):
     results_df = matcher.match_bib(bib_db)
 
     write_df_to_postgres(results_df, settings.affiliation_output)
-
-
-"""
-if __name__ == "__main__":
-    settings = AffiliationMatchingEntrypoint(
-        ASSIGN_ALL_IF_SINGLE_INSTITUTION=False,
-        MATCH_THRESHOLD=75.0,
-        bib_input=BIBInput(
-            BUCKET_NAME="test",
-            FILE_EXT="bib",
-            FILE_NAME="input",
-            FILE_PATH="",
-            S3_ACCESS_KEY="minioadmin",
-            S3_HOST="http://localhost",
-            S3_PORT="9000",
-            S3_SECRET_KEY="minioadmin"
-        ),
-        affiliation_output=AffiliationOutput(
-            DB_TABLE="test",
-            PG_HOST="localhost",
-            PG_PASS="postgres",
-            PG_PORT="5432",
-            PG_USER="postgres",
-        )
-    )
-    affiliation_matching(settings)
-"""

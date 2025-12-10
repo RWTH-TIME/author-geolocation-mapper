@@ -60,12 +60,55 @@ jobs:
           print("cbc.yaml matches python code definition")
           EOF
   
-  # TODO: Add Tests
+  run-test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: validate-compute-block
+    services:
+      minio:
+        image: lazybit/minio
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live || exit 1"
+          --health-interval 5s
+          --health-retries 5
+          --health-timeout 5s
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-retries=10
+          --health-timeout=5s
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest -vv
 
   build:
     name: Build docker image
     runs-on: ubuntu-latest
-    # TODO: depend on run-tests
+    needs: run-test
     permissions:
       contents: read
       packages: write

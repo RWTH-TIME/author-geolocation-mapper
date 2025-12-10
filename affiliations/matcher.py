@@ -63,19 +63,21 @@ class AffiliationMatcher:
                 inst = extract_institution(parsed.rest)
                 match = self.best_match(inst)
 
+                if match.similarity <= self.threshold:
+                    continue
+
                 targets = (
                     parsed.authors
                     if parsed.authors
                     else (
                         paper_authors if single_aff and
-                        self.assign_all_if_single else [])
+                        self.assign_all_if_single else []
+                    )
                 )
 
                 for author in targets:
-                    assignment = self._make_assignment(
-                        author, parsed.rest, match)
-                    if assignment is not None:   # keep only valid matches
-                        results.append(assignment)
+                    results.append(self._make_assignment(
+                        author, parsed.rest, match))
 
         return pd.DataFrame(results)
 
