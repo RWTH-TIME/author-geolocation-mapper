@@ -1,7 +1,7 @@
 name: Author Geolocation Mapper
 author: Paul Kalhorn
 description: Author to Geolocation Mapping 
-docker_image: docker pull ghcr.io/rwth-time/author-geolocation-mapper/author-geolocation-mapper:latest 
+docker_image: ghcr.io/rwth-time/author-geolocation-mapper/author-geolocation-mapper:latest 
 entrypoints:
   affiliation_matching:
     description: Match affiliations of authors to their geolocation
