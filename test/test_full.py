@@ -88,14 +88,9 @@ def test_affiliation_matching_entrypoint(s3_minio, postgres_conn):
         "bib_file_FILE_PATH": "",
         "bib_file_FILE_NAME": "input",
         "bib_file_FILE_EXT": "bib",
-
         # Output Postgres
-        "affiliation_output_PG_HOST": "127.0.0.1",
-        "affiliation_output_PG_PORT": "5432",
-        "affiliation_output_PG_USER": POSTGRES_USER,
-        "affiliation_output_PG_PASS": POSTGRES_PWD,
+        "affiliation_output_DB_DSN": f"postgresql://{POSTGRES_USER}:{POSTGRES_PWD}@127.0.0.1:5432/postgres",
         "affiliation_output_DB_TABLE": "aff_results",
-
         # Matcher configuration
         "MATCH_THRESHOLD": "80",
         "ASSIGN_ALL_IF_SINGLE_INSTITUTION": "true",
@@ -109,12 +104,18 @@ def test_affiliation_matching_entrypoint(s3_minio, postgres_conn):
     cur = postgres_conn.cursor()
     cur.execute("SELECT * FROM aff_results ORDER BY 1;")
 
-    df = pd.DataFrame(cur.fetchall(), columns=[
-                      col.name for col in cur.description])
+    df = pd.DataFrame(
+        cur.fetchall(), columns=[col.name for col in cur.description]
+    )
 
     # Basic assertions
     expected_cols = {
-        "author", "institution", "similarity", "lat", "lon", "raw_rest"
+        "author",
+        "institution",
+        "similarity",
+        "lat",
+        "lon",
+        "raw_rest",
     }
     assert expected_cols.issubset(df.columns)
 
@@ -128,7 +129,7 @@ def test_affiliation_matching_entrypoint(s3_minio, postgres_conn):
     row = df[df["author"].str.contains("Benyoussef", case=False)].iloc[0]
 
     assert isinstance(row["institution"], str)
-    assert len(row["institution"]) > 3      # non-empty name
+    assert len(row["institution"]) > 3  # non-empty name
 
     # Similarity is percentage (0–100), not normalized
     assert 0 <= row["similarity"] <= 100
@@ -140,8 +141,7 @@ def test_affiliation_matching_entrypoint(s3_minio, postgres_conn):
     assert isinstance(row["lon"], float)
 
     # 4. Threshold check
-    assert (df["similarity"] >= float(
-        os.environ["MATCH_THRESHOLD"])).all()
+    assert (df["similarity"] >= float(os.environ["MATCH_THRESHOLD"])).all()
 
     # 5. Sanity: we have at least one author
     assert len(df["author"].unique()) >= 1

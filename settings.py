@@ -3,15 +3,32 @@ from scystream.sdk.env.settings import (
     InputSettings,
     OutputSettings,
     FileSettings,
-    PostgresSettings
+    DatabaseSettings,
 )
 
 REFERENCE_COL = "name"
 INSTITUTION_KEYWORDS = {
-    "univ", "university", "dept", "department", "inst", "institute",
-    "lab", "laboratory", "college", "school", "hosp", "hospital",
-    "ctr", "center", "centre", "faculty", "fac", "academy", "dept.", "inst.",
-    "management"
+    "univ",
+    "university",
+    "dept",
+    "department",
+    "inst",
+    "institute",
+    "lab",
+    "laboratory",
+    "college",
+    "school",
+    "hosp",
+    "hospital",
+    "ctr",
+    "center",
+    "centre",
+    "faculty",
+    "fac",
+    "academy",
+    "dept.",
+    "inst.",
+    "management",
 }
 
 
@@ -20,7 +37,7 @@ class BIBInput(FileSettings, InputSettings):
     FILE_EXT: str = "bib"
 
 
-class AffiliationOutput(PostgresSettings, OutputSettings):
+class AffiliationOutput(DatabaseSettings, OutputSettings):
     __identifier__ = "affiliation_output"
 
 
