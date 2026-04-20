@@ -27,5 +27,6 @@ entrypoints:
         config:
           affiliation_output_DB_TABLE: null
           affiliation_output_DB_DSN: null
+          affiliation_output_DB_SCHEMA: null
         description: A database table containing the authors, their matched institution, lat, lon, and the confidence score
         type: database_table

@@ -44,7 +44,8 @@ def affiliation_matching(settings):
     results_df = matcher.match_bib(bib_db)
 
     affiliations_db = PandasDatabaseOperations(
-        settings.affiliation_output.DB_DSN
+        settings.affiliation_output.DB_DSN,
+        settings.affiliation_output.DB_SCHEMA,
     )
     affiliations_db.write(
         table=settings.affiliation_output.DB_TABLE, data=results_df
