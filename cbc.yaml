@@ -1,7 +1,7 @@
 name: Author Geolocation Mapper
 author: Paul Kalhorn
-description: Author to Geolocation Mapping 
-docker_image: ghcr.io/rwth-time/author-geolocation-mapper/author-geolocation-mapper:latest 
+description: Author to Geolocation Mapping
+docker_image: ghcr.io/rwth-time/author-geolocation-mapper/author-geolocation-mapper:latest
 entrypoints:
   affiliation_matching:
     description: Match affiliations of authors to their geolocation
@@ -26,9 +26,7 @@ entrypoints:
       affiliation_output:
         config:
           affiliation_output_DB_TABLE: null
-          affiliation_output_PG_HOST: null
-          affiliation_output_PG_PASS: null
-          affiliation_output_PG_PORT: null
-          affiliation_output_PG_USER: null
+          affiliation_output_DB_DSN: null
+          affiliation_output_DB_SCHEMA: null
         description: A database table containing the authors, their matched institution, lat, lon, and the confidence score
-        type: pg_table
+        type: database_table
